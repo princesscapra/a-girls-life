@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>A Girl's Life - Simulateur low-tech</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header class="hero">
+      <h1>A Girl's Life</h1>
+      <p>Simulateur de vie factuel: 5 secondes reelles = 1 an de vie.</p>
+    </header>
+
+    <main>
+      <section class="card">
+        <h2>Naissance</h2>
+        <form id="start-form">
+          <p>
+            Le profil de naissance est genere aleatoirement: sexe assigne a la naissance, contexte social,
+            puis evolution de l'identite selon les probabilites du moteur.
+          </p>
+
+          <button type="submit">Naitre</button>
+        </form>
+      </section>
+
+      <section class="card controls" aria-live="polite">
+        <h2>Vie en cours</h2>
+        <p id="status">Aucune simulation active.</p>
+        <div class="actions">
+          <button id="pause" disabled>Pause</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Filtres</h2>
+        <label class="toggle">
+          <input id="sensitive-filter" type="checkbox" checked>
+          Afficher les categories sensibles (violences, discriminations)
+        </label>
+      </section>
+
+      <section class="card">
+        <h2>Evenements de l'annee</h2>
+        <ul id="year-events" class="events"></ul>
+      </section>
+
+      <section class="card">
+        <h2>Journal de vie (cumulatif)</h2>
+        <ul id="life-journal" class="life-journal"></ul>
+      </section>
+
+      <section class="card">
+        <h2>Historique</h2>
+        <ol id="timeline" class="timeline"></ol>
+      </section>
+
+      <section class="card">
+        <h2>Journal technique</h2>
+        <ul id="activity-log" class="activity-log"></ul>
+      </section>
+
+      <section class="card">
+        <h2>Methodologie et limites</h2>
+        <p>
+          Ce prototype pedagogique utilise un jeu de probabilites initiales et affiche la source associee
+          a chaque evenement. Il ne remplace pas une expertise medicale, juridique ou sociale.
+        </p>
+      </section>
+    </main>
+
+    <footer>
+      <small>Sources et probabilites en cours de calibration France.</small>
+    </footer>
+
+    <script type="module" src="/app.js?v=20261026-1538"></script>
+  </body>
+</html>

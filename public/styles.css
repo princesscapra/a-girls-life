@@ -1,0 +1,195 @@
+:root {
+  --bg: #f3efe6;
+  --bg-alt: #e8ddc9;
+  --surface: #fff9ef;
+  --text: #231f1a;
+  --accent: #12664f;
+  --accent-strong: #0a4637;
+  --danger: #8c1c13;
+  --border: #ccbfa6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Source Serif 4", Georgia, serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 10% 0%, rgba(18, 102, 79, 0.12), transparent 38%),
+    radial-gradient(circle at 100% 80%, rgba(140, 28, 19, 0.08), transparent 40%),
+    linear-gradient(180deg, var(--bg), var(--bg-alt));
+  min-height: 100vh;
+}
+
+.hero {
+  padding: 2rem 1rem 1.5rem;
+  text-align: center;
+}
+
+.hero h1 {
+  margin: 0 0 0.5rem;
+  font-size: clamp(2rem, 4vw, 3rem);
+  letter-spacing: 0.02em;
+}
+
+main {
+  width: min(980px, 92vw);
+  margin: 0 auto 2rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 0 2px 0 rgba(35, 31, 26, 0.08);
+}
+
+.card h2 {
+  margin-top: 0;
+}
+
+form,
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+label {
+  font-weight: 600;
+  display: block;
+  width: 100%;
+}
+
+select,
+button {
+  font: inherit;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  padding: 0.45rem 0.7rem;
+}
+
+button {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent-strong);
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+button:hover:enabled,
+button:focus-visible:enabled {
+  background: var(--accent-strong);
+}
+
+.toggle {
+  font-weight: 400;
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.events,
+.timeline {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.timeline {
+  max-height: 18rem;
+  overflow: auto;
+}
+
+.life-journal {
+  margin: 0;
+  padding-left: 1.2rem;
+  max-height: 18rem;
+  overflow: auto;
+  min-height: 3.2rem;
+}
+
+.activity-log {
+  margin: 0;
+  padding-left: 1.2rem;
+  max-height: 15rem;
+  overflow: auto;
+  min-height: 3.2rem;
+  font-family: "IBM Plex Mono", "Courier New", monospace;
+  font-size: 0.9rem;
+}
+
+.events li,
+.timeline li {
+  margin-bottom: 0.6rem;
+  line-height: 1.4;
+}
+
+.life-journal li {
+  margin-bottom: 0.6rem;
+  line-height: 1.35;
+}
+
+.activity-log li {
+  margin-bottom: 0.45rem;
+  line-height: 1.35;
+  border-left: 3px solid var(--border);
+  padding-left: 0.45rem;
+}
+
+.journal-placeholder,
+.log-placeholder {
+  color: #6f6456;
+  font-style: italic;
+}
+
+.log-info {
+  border-left-color: var(--accent);
+}
+
+.log-warn {
+  border-left-color: #b86a00;
+}
+
+.log-error {
+  border-left-color: var(--danger);
+}
+
+.meta {
+  color: #5f5345;
+  font-size: 0.92rem;
+}
+
+.sensitive {
+  border-left: 4px solid var(--danger);
+  padding-left: 0.5rem;
+}
+
+footer {
+  text-align: center;
+  padding: 1.2rem 1rem 2rem;
+}
+
+@media (max-width: 700px) {
+  .hero {
+    padding-top: 1.4rem;
+  }
+
+  main {
+    width: 94vw;
+  }
+
+  .actions button {
+    flex: 1 1 auto;
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "a-girls-life",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Low-tech life simulation MVP (cis and trans women) with sourced probabilistic events.",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
