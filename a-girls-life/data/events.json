@@ -1,0 +1,295 @@
+[
+  {
+    "id": "harcelement_espace_public",
+    "category": "violences",
+    "label": "Experience de harcelement sexiste dans l'espace public.",
+    "target": "all_women",
+    "probabilityAnnual": 0.08,
+    "minAge": 12,
+    "maxAge": 75,
+    "sourceId": "hautconseil_egalite",
+    "note": "Valeur de depart MVP a recalibrer sur donnees annuelles harmonisees France.",
+    "modifiers": [
+      {
+        "minAge": 12,
+        "maxAge": 24,
+        "multiplier": 1.4
+      },
+      {
+        "socioEconomic": ["low"],
+        "multiplier": 1.2
+      }
+    ]
+  },
+  {
+    "id": "discrimination_emploi",
+    "category": "emploi",
+    "label": "Discrimination de genre au travail ou a l'embauche.",
+    "target": "all_women",
+    "probabilityAnnual": 0.05,
+    "minAge": 18,
+    "maxAge": 64,
+    "sourceId": "hautconseil_egalite",
+    "note": "Proxy annuel initial; calibration detaillee prevue dans le prochain lot de donnees.",
+    "modifiers": [
+      {
+        "socioEconomic": ["low"],
+        "multiplier": 1.3
+      }
+    ]
+  },
+  {
+    "id": "ecart_remuneration",
+    "category": "revenus",
+    "label": "Impact de l'ecart de remuneration selon le genre.",
+    "target": "all_women",
+    "probabilityAnnual": 0.09,
+    "minAge": 22,
+    "maxAge": 64,
+    "sourceId": "hautconseil_egalite",
+    "note": "Traduit un risque structurel en evenement annuel simplifie pour le MVP."
+  },
+  {
+    "id": "discrimination_trans_services",
+    "category": "discriminations",
+    "label": "Discrimination specifique vecue en tant que femme trans.",
+    "target": "trans_women",
+    "probabilityAnnual": 0.12,
+    "minAge": 14,
+    "maxAge": 80,
+    "sourceId": "amnesty_trans_discrimination",
+    "note": "Parametre initial de sensibilisation; ajustement quantitatif France requis.",
+    "modifiers": [
+      {
+        "socioEconomic": ["low"],
+        "multiplier": 1.2
+      }
+    ]
+  },
+  {
+    "id": "charge_mentale_parentalite",
+    "category": "parentalite",
+    "label": "Hausse de la charge mentale liee a la parentalite.",
+    "target": "all_women",
+    "probabilityAnnual": 0.04,
+    "minAge": 25,
+    "maxAge": 50,
+    "sourceId": "onufemmes_violence",
+    "note": "Evenement non violent utilise pour equilibrer la simulation du parcours de vie."
+  },
+  {
+    "id": "precarite_energetique",
+    "category": "precarite",
+    "label": "Episode de precarite materielle ou energetique.",
+    "target": "all_women",
+    "probabilityAnnual": 0.03,
+    "minAge": 18,
+    "maxAge": 90,
+    "sourceId": "hautconseil_egalite",
+    "modifiers": [
+      {
+        "socioEconomic": ["low"],
+        "multiplier": 2.1
+      }
+    ]
+  },
+  {
+    "id": "violence_enfance_cadre_familial",
+    "category": "violences",
+    "label": "Exposition a des violences intrafamiliales pendant l'enfance.",
+    "target": "all_women",
+    "probabilityAnnual": 0.03,
+    "minAge": 0,
+    "maxAge": 17,
+    "sourceId": "unicef_violence_enfants",
+    "note": "Parametre initial de sensibilisation sur les violences envers les enfants; calibration France a poursuivre.",
+    "modifiers": [
+      {
+        "socioEconomic": ["low"],
+        "multiplier": 1.4
+      }
+    ]
+  },
+  {
+    "id": "cadre_parental_instable",
+    "category": "cadre_parental",
+    "label": "Cadre parental instable impactant le bien-etre et la securite de l'enfant.",
+    "target": "all_women",
+    "probabilityAnnual": 0.04,
+    "minAge": 0,
+    "maxAge": 17,
+    "sourceId": "onpe_protection_enfance",
+    "note": "Evenement de contexte familial pour mieux refleter la diversite des parcours d'enfance.",
+    "modifiers": [
+      {
+        "socioEconomic": ["low"],
+        "multiplier": 1.5
+      }
+    ]
+  },
+  {
+    "id": "sexisme_petite_fille_scolaire",
+    "category": "discriminations",
+    "label": "Sexisme et stereotyping de genre vecus a l'ecole pendant l'enfance.",
+    "target": "all_women",
+    "probabilityAnnual": 0.06,
+    "minAge": 6,
+    "maxAge": 14,
+    "sourceId": "unicef_egalite_filles",
+    "note": "Traduit les normes de genre discriminantes en experience annuelle dans le parcours des petites filles."
+  },
+  {
+    "id": "discrimination_activites_petite_fille",
+    "category": "discriminations",
+    "label": "Restriction d'acces ou orientation stereotypee dans les activites de petite fille.",
+    "target": "all_women",
+    "probabilityAnnual": 0.05,
+    "minAge": 5,
+    "maxAge": 12,
+    "sourceId": "hautconseil_egalite",
+    "note": "Permet de representer des discriminations precoces et du sexisme ordinaire durant l'enfance."
+  },
+  {
+    "id": "harcelement_scolaire_enfance",
+    "category": "violences",
+    "label": "Harcèlement scolaire avec impact psychologique (isolement, baisse d'estime de soi).",
+    "target": "all_women",
+    "probabilityAnnual": 0.06,
+    "minAge": 6,
+    "maxAge": 17,
+    "sourceId": "oms_violence_enfants",
+    "note": "Taux annuel MVP derive de prevalences globales de violence/harcelement chez les enfants, a recalibrer France.",
+    "effects": [
+      "Risque accru d'anxiete",
+      "Risque accru de symptomes depressifs",
+      "Retrait social"
+    ],
+    "modifiers": [
+      {
+        "socioEconomic": ["low"],
+        "multiplier": 1.2
+      }
+    ]
+  },
+  {
+    "id": "maltraitance_psychologique_domicile",
+    "category": "violences",
+    "label": "Maltraitance psychologique au domicile pendant l'enfance.",
+    "target": "all_women",
+    "probabilityAnnual": 0.025,
+    "minAge": 0,
+    "maxAge": 17,
+    "sourceId": "oms_violence_enfants",
+    "note": "Proxy annuel initial base sur la litterature internationale ACE/violence infantile; calibration nationale en attente.",
+    "effects": [
+      "Dysregulation emotionnelle",
+      "Hypervigilance",
+      "Risque accru de TSPT"
+    ],
+    "modifiers": [
+      {
+        "socioEconomic": ["low"],
+        "multiplier": 1.35
+      }
+    ]
+  },
+  {
+    "id": "trouble_anxieux_adolescence",
+    "category": "sante_mentale",
+    "label": "Trouble anxieux apparaissant a l'adolescence.",
+    "target": "all_women",
+    "probabilityAnnual": 0.045,
+    "minAge": 12,
+    "maxAge": 18,
+    "sourceId": "oms_sante_mentale_ados",
+    "unique": true,
+    "note": "Probabilite annuelle de depart inspiree des prevalences OMS et distribuee sur l'intervalle d'age adolescent.",
+    "effects": [
+      "Difficultes de concentration scolaire",
+      "Somatisations",
+      "Baisse de qualite de vie"
+    ],
+    "modifiers": [
+      {
+        "requiresAnyTriggered": [
+          "violence_enfance_cadre_familial",
+          "harcelement_scolaire_enfance",
+          "maltraitance_psychologique_domicile"
+        ],
+        "multiplier": 1.9
+      }
+    ]
+  },
+  {
+    "id": "episode_depressif_jeune_adulte",
+    "category": "sante_mentale",
+    "label": "Episode depressif a l'entree dans l'age adulte.",
+    "target": "all_women",
+    "probabilityAnnual": 0.038,
+    "minAge": 18,
+    "maxAge": 35,
+    "sourceId": "sante_publique_france_sante_mentale",
+    "unique": true,
+    "note": "Valeur annuelle MVP pour simuler le fardeau depressif; necessite un recalage par tranche d'age France.",
+    "effects": [
+      "Fatigue persistante",
+      "Perte d'elan scolaire/professionnel",
+      "Besoin de suivi psychologique"
+    ],
+    "modifiers": [
+      {
+        "requiresAnyTriggered": [
+          "violence_enfance_cadre_familial",
+          "harcelement_scolaire_enfance",
+          "maltraitance_psychologique_domicile",
+          "trouble_anxieux_adolescence"
+        ],
+        "multiplier": 1.8
+      }
+    ]
+  },
+  {
+    "id": "stress_post_traumatique",
+    "category": "sante_mentale",
+    "label": "Symptomes de stress post-traumatique lies a des violences subies plus tot.",
+    "target": "all_women",
+    "probabilityAnnual": 0.02,
+    "minAge": 12,
+    "maxAge": 55,
+    "sourceId": "inserm_psychotrauma",
+    "unique": true,
+    "requiresAnyTriggered": [
+      "violence_enfance_cadre_familial",
+      "harcelement_scolaire_enfance",
+      "maltraitance_psychologique_domicile"
+    ],
+    "note": "Le risque est conditionne a l'exposition a des violences precoces; valeur annuelle simplifiee pour le MVP.",
+    "effects": [
+      "Reviviscences",
+      "Troubles du sommeil",
+      "Evitement",
+      "Hyperactivation"
+    ]
+  },
+  {
+    "id": "troubles_sommeil_trauma",
+    "category": "sante_mentale",
+    "label": "Troubles du sommeil persistants associes aux violences ou au harcelement vecus.",
+    "target": "all_women",
+    "probabilityAnnual": 0.05,
+    "minAge": 8,
+    "maxAge": 45,
+    "sourceId": "inserm_psychotrauma",
+    "requiresAnyTriggered": [
+      "violence_enfance_cadre_familial",
+      "harcelement_scolaire_enfance",
+      "maltraitance_psychologique_domicile"
+    ],
+    "note": "Effet longitudinal frequent apres exposition repetee a la violence; valeur annuelle indicative.",
+    "effects": [
+      "Somnolence diurne",
+      "Irritabilite",
+      "Risque d'aggravation anxio-depressive"
+    ]
+  }
+]
