@@ -118,5 +118,85 @@
     "collectedAt": "2026-10-26",
     "scope": "France",
     "notes": "Source de cadrage sur les consequences psychiques des violences precoces (anxiete, depression, TSPT)."
+  },
+  {
+    "id": "oms_endometriose",
+    "organization": "OMS",
+    "title": "Endometriosis - Fact sheet",
+    "url": "https://www.who.int/fr/news-room/fact-sheets/detail/endometriosis",
+    "publishedAt": "2025-10-15",
+    "collectedAt": "2026-10-28",
+    "scope": "Monde",
+    "notes": "Reference epidemiologique globale (environ 10% des femmes en age de procreer) et impact sanitaire/socio-economique."
+  },
+  {
+    "id": "inserm_endometriose",
+    "organization": "Inserm",
+    "title": "Endometriose - dossier d'information",
+    "url": "https://www.inserm.fr/dossier/endometriose/",
+    "publishedAt": "2024-07-01",
+    "collectedAt": "2026-10-28",
+    "scope": "France",
+    "notes": "Cadrage scientifique France sur prevalence, symptomes (douleurs invalidantes) et enjeux de diagnostic/prise en charge."
+  },
+  {
+    "id": "unicef_hygiene_menstruelle",
+    "organization": "UNICEF",
+    "title": "Menstrual hygiene",
+    "url": "https://www.unicef.org/wash/menstrual-hygiene",
+    "publishedAt": "2024-01-01",
+    "collectedAt": "2026-10-28",
+    "scope": "Monde",
+    "notes": "Reference sur les besoins d'acces aux produits, sanitaires et services pour une gestion digne des menstruations."
+  },
+  {
+    "id": "regles_elementaires_precarite",
+    "organization": "Regles Elementaires",
+    "title": "Justice menstruelle et acces aux protections periodiques",
+    "url": "https://www.regleselementaires.com/barometre-precarite-menstruelle/",
+    "publishedAt": "2026-10-19",
+    "collectedAt": "2026-10-28",
+    "scope": "France",
+    "notes": "Source associative de terrain sur la precarite menstruelle et l'acces effectif aux protections periodiques."
+  },
+  {
+    "id": "fondation_femmes_ifop_precarite_2019",
+    "organization": "Fondation des Femmes",
+    "title": "Communique sur la precarite menstruelle (cite IFOP pour Dons Solidaires 2019)",
+    "url": "https://fondationdesfemmes.org/communiques-de-presse/precarite-menstruelle-pere-noel/",
+    "publishedAt": "2020-12-11",
+    "collectedAt": "2026-10-28",
+    "scope": "France",
+    "notes": "Mention quantitative: 1 700 000 femmes sans acces suffisant aux protections periodiques (etude IFOP pour Dons Solidaires 2019, citee dans le communique)."
+  },
+  {
+    "id": "insee_population_femmes_age",
+    "organization": "INSEE",
+    "title": "Population par sexe et groupe d'ages - Donnees annuelles 2026",
+    "url": "https://www.insee.fr/fr/statistiques/2381474",
+    "publishedAt": "2026-01-13",
+    "collectedAt": "2026-10-28",
+    "scope": "France",
+    "notes": "Denominateur utilise pour calibration: femmes 15-49 ans = 14,675 millions (somme des classes 15-19 a 45-49)."
+  },
+  {
+    "id": "bmc_japan_dysmenorrhea_work_2026",
+    "organization": "BMC Women's Health",
+    "title": "Dysmenorrhea patients' experience with work productivity impact and treatment in Japan",
+    "url": "https://doi.org/10.1186/s12905-026-04588-8",
+    "publishedAt": "2026-06-12",
+    "collectedAt": "2026-10-28",
+    "scope": "Japon",
+    "notes": "Cohorte de 9 235 femmes (18-50 ans), dont 956 avec dysmenorrhee diagnostiquee. Score moyen d'absenteisme WPAI-GH chez les patientes dysmenorrhee: 2,5% (SE 0,3). Utilise comme proxy conservateur pour calibrer un risque annuel d'absenteisme lie aux regles douloureuses."
+  },
+  {
+    "id": "placeholder_evenements_positifs",
+    "organization": "A completer",
+    "title": "Placeholder source - evenements positifs",
+    "url": "https://example.com/source-a-remplacer",
+    "publishedAt": "2026-01-01",
+    "collectedAt": "2026-10-28",
+    "scope": "A definir",
+    "notes": "Placeholder temporaire pour rattacher les evenements positifs avant ajout de sources finales."
   }
 ]

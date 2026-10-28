@@ -1,10 +1,21 @@
-const state = {
-  simulationState: null,
-  timerId: null,
-  yearDurationMs: 5000,
-  sourceById: new Map(),
-  showSensitive: true,
-};
+import { createSimulationState, advanceSimulationState, fetchBootstrap } from "./services/api.js";
+import { createStore, featureEnabled } from "./state/store.js";
+import {
+  appendLog,
+  applyUiFlags,
+  refreshControls,
+  renderIdentity,
+  renderIndicators,
+  renderTimeline,
+  renderYearEvents,
+  setStatus,
+  showBirthModal,
+  socioLabel,
+} from "./ui/renderers.js";
+import { renderLifeJournal } from "./ui/journal.js";
+import { applyScenarioChoice, ensureIndicators, openScenarioModal } from "./ui/scenario.js";
+
+const state = createStore();
 
 const dom = {
   form: document.getElementById("start-form"),
@@ -15,248 +26,157 @@ const dom = {
   timeline: document.getElementById("timeline"),
   activityLog: document.getElementById("activity-log"),
   sensitiveFilter: document.getElementById("sensitive-filter"),
+  avatar: document.getElementById("avatar"),
+  name: document.getElementById("name"),
+  birthDate: document.getElementById("birth-date"),
+  birthSex: document.getElementById("birth-sex"),
+  genderIdentity: document.getElementById("gender-identity"),
+  sexualOrientation: document.getElementById("sexual-orientation"),
+  socialContext: document.getElementById("social-context"),
+  religion: document.getElementById("religion"),
+  education: document.getElementById("education"),
+  profession: document.getElementById("profession"),
+  passion: document.getElementById("passion"),
+  birthModal: document.getElementById("birth-modal"),
+  birthModalText: document.getElementById("birth-modal-text"),
+  birthModalClose: document.getElementById("birth-modal-close"),
+  scenarioModal: document.getElementById("scenario-modal"),
+  scenarioTitle: document.getElementById("scenario-title"),
+  scenarioDescription: document.getElementById("scenario-description"),
+  scenarioEventLabel: document.getElementById("scenario-event-label"),
+  scenarioChoices: document.getElementById("scenario-choices"),
+  identityCard: document.getElementById("identity-card"),
+  sensitiveFilterCard: document.getElementById("sensitive-filter-card"),
+  activityLogCard: document.getElementById("activity-log-card"),
+  indicatorsCard: document.getElementById("indicators-card"),
+  indicatorFills: {
+    bonheur: document.getElementById("fill-bonheur"),
+    sante: document.getElementById("fill-sante"),
+    santeMentale: document.getElementById("fill-sante-mentale"),
+    estimeDeSoi: document.getElementById("fill-estime-de-soi"),
+    affirmationDeSoi: document.getElementById("fill-affirmation-de-soi"),
+    conditionDeVie: document.getElementById("fill-condition-de-vie"),
+  },
+  indicatorValues: {
+    bonheur: document.getElementById("value-bonheur"),
+    sante: document.getElementById("value-sante"),
+    santeMentale: document.getElementById("value-sante-mentale"),
+    estimeDeSoi: document.getElementById("value-estime-de-soi"),
+    affirmationDeSoi: document.getElementById("value-affirmation-de-soi"),
+    conditionDeVie: document.getElementById("value-condition-de-vie"),
+  },
 };
 
-function socioLabel(value) {
-  if (value === "low") return "precaire";
-  if (value === "high") return "aise";
-  return "intermediaire";
-}
-
-function appendLog(level, message) {
-  if (!dom.activityLog) return;
-
-  const placeholder = dom.activityLog.querySelector(".log-placeholder");
-  if (placeholder) {
-    placeholder.remove();
+async function runScenarioQueue(events) {
+  if (!featureEnabled(state.flags?.ui?.showScenarioPopup)) return;
+  if (!Array.isArray(events) || events.length === 0) return;
+  const shouldResumeAfter = Boolean(state.timerId);
+  if (shouldResumeAfter) {
+    stopAutoPlay();
   }
 
-  const li = document.createElement("li");
-  const now = new Date();
-  const hh = String(now.getHours()).padStart(2, "0");
-  const mm = String(now.getMinutes()).padStart(2, "0");
-  const ss = String(now.getSeconds()).padStart(2, "0");
-  li.className = `log-${level}`;
-  li.textContent = `[${hh}:${mm}:${ss}] ${level.toUpperCase()} - ${message}`;
+  const selectableEvents = events.filter((event) => event.id !== "mortality");
 
-  dom.activityLog.prepend(li);
-  const extra = dom.activityLog.querySelectorAll("li");
-  if (extra.length > 40) {
-    extra[extra.length - 1].remove();
-  }
-}
+  const processEventAt = async (index) => {
+    if (index >= selectableEvents.length) return;
+    const event = selectableEvents[index];
+    const choice = await openScenarioModal(dom, state, event);
+    if (choice) {
+      applyScenarioChoice(state.simulationState, choice);
+      const currentEntry = state.simulationState.timeline[state.simulationState.timeline.length - 1];
+      if (currentEntry) {
+        if (!Array.isArray(currentEntry.playerChoices)) {
+          currentEntry.playerChoices = [];
+        }
 
-function isSensitiveCategory(category) {
-  return category === "violences" || category === "discriminations";
-}
+        currentEntry.playerChoices.push({
+          eventId: event.id,
+          choiceId: choice.id,
+          choiceLabel: choice.label,
+        });
+      }
 
-function setStatus(text) {
-  dom.status.textContent = text;
-}
-
-function refreshControls() {
-  const playing = Boolean(state.timerId);
-
-  dom.pause.disabled = !playing;
-}
-
-function sourceMeta(sourceId) {
-  const source = state.sourceById.get(sourceId);
-  if (!source) return "Source indisponible";
-  return `${source.organization} - ${source.title} (${source.collectedAt || "date inconnue"})`;
-}
-
-function sourceLink(sourceId) {
-  const source = state.sourceById.get(sourceId);
-  if (!source?.url) return "";
-  return `<a href="${source.url}" target="_blank" rel="noopener noreferrer">Source</a>`;
-}
-
-function renderYearEvents(events) {
-  const visibleEvents = state.showSensitive
-    ? events
-    : events.filter((event) => !isSensitiveCategory(event.category));
-
-  dom.yearEvents.innerHTML = "";
-  if (visibleEvents.length === 0) {
-    const li = document.createElement("li");
-    li.textContent = "Aucun evenement affiche pour cette annee avec le filtre actif.";
-    dom.yearEvents.appendChild(li);
-    return;
-  }
-
-  for (const event of visibleEvents) {
-    const li = document.createElement("li");
-    if (isSensitiveCategory(event.category)) {
-      li.classList.add("sensitive");
+      appendLog(dom, "info", `Choix scenario: ${choice.label} (${event.id})`);
+      renderIndicators(dom, state);
     }
 
-    const probabilityPct = `${Math.round((event.probabilityApplied || 0) * 1000) / 10}%`;
-    li.innerHTML = `
-      <strong>${event.label}</strong>
-      <div class="meta">Categorie: ${event.category} | Probabilite appliquee: ${probabilityPct}</div>
-      <div class="meta">${sourceMeta(event.sourceId)} ${sourceLink(event.sourceId)}</div>
-    `;
+    await processEventAt(index + 1);
+  };
 
-    if (event.note) {
-      const note = document.createElement("div");
-      note.className = "meta";
-      note.textContent = `Contexte: ${event.note}`;
-      li.appendChild(note);
+  await processEventAt(0);
+
+  if (shouldResumeAfter && state.simulationState?.alive) {
+    startAutoPlay();
+  }
+}
+
+function stopAutoPlay() {
+  if (!state.timerId) return;
+  clearInterval(state.timerId);
+  state.timerId = null;
+  refreshControls(dom, state);
+}
+
+async function advanceYear() {
+  if (!state.simulationState?.alive) return;
+
+  const response = await advanceSimulationState(state.simulationState);
+  state.simulationState = response.state;
+  ensureIndicators(state.simulationState);
+
+  renderTimeline(dom, state);
+  renderYearEvents(dom, state, response.yearEvents || []);
+  renderLifeJournal(dom, state);
+  renderIdentity(dom, state);
+  renderIndicators(dom, state);
+
+  if (state.simulationState.alive) {
+    await runScenarioQueue(response.yearEvents || []);
+  }
+
+  if (!state.simulationState.alive) {
+    setStatus(dom, `Fin de vie atteinte a ${state.simulationState.age} ans. La simulation s'arrete automatiquement.`);
+    appendLog(dom, "warn", `Fin de vie a ${state.simulationState.age} ans.`);
+    stopAutoPlay();
+  } else {
+    setStatus(
+      dom,
+      `Annee ${state.simulationState.year}: age ${state.simulationState.age}, etape ${state.simulationState.lifeStage}, identite ${state.simulationState.identity}.`
+    );
+    appendLog(
+      dom,
+      "info",
+      `Annee ${state.simulationState.year}, age ${state.simulationState.age}, etape ${state.simulationState.lifeStage}, identite ${state.simulationState.identity}, ${response.yearEvents.length} evenement(s).`
+    );
+
+    for (const event of response.yearEvents) {
+      appendLog(dom, "info", `Evenement: ${event.label} [${event.category}]`);
     }
-
-    if (Array.isArray(event.effects) && event.effects.length > 0) {
-      const effects = document.createElement("div");
-      effects.className = "meta";
-      effects.textContent = `Effets possibles: ${event.effects.join("; ")}`;
-      li.appendChild(effects);
-    }
-
-    dom.yearEvents.appendChild(li);
   }
+
+  refreshControls(dom, state);
 }
 
-function renderTimeline() {
-  if (!state.simulationState) {
-    dom.timeline.innerHTML = "";
-    return;
-  }
+function startAutoPlay() {
+  if (state.timerId || !state.simulationState?.alive) return;
 
-  const entries = state.simulationState.timeline.slice().reverse();
-  dom.timeline.innerHTML = "";
+  state.timerId = setInterval(() => {
+    advanceYear().catch((error) => {
+      setStatus(dom, error.message);
+      stopAutoPlay();
+    });
+  }, state.yearDurationMs);
 
-  for (const entry of entries) {
-    const li = document.createElement("li");
-    li.innerHTML = `
-      Annee ${entry.year} (age ${entry.age}) - Etape: ${entry.lifeStage || "N/A"} - Identite: ${entry.identity}
-      <span class="meta"> | ${entry.events.length} evenement(s)</span>
-    `;
-    dom.timeline.appendChild(li);
-  }
-}
-
-function createBirthJournalItem(entry, yearTitle) {
-  const li = document.createElement("li");
-  li.innerHTML = `
-    <strong>${yearTitle}</strong>: Naissance du personnage.
-    <div class="meta">Etape: ${entry.lifeStage || "N/A"} | Identite: ${entry.identity}</div>
-  `;
-  return li;
-}
-
-function createNoEventJournalItem(entry, yearTitle) {
-  const li = document.createElement("li");
-  li.innerHTML = `
-    <strong>${yearTitle}</strong>: Aucune situation declenchee cette annee.
-    <div class="meta">Etape: ${entry.lifeStage || "N/A"} | Identite: ${entry.identity}</div>
-  `;
-  return li;
-}
-
-function createEventRow(event) {
-  const row = document.createElement("div");
-  const probabilityPct = `${Math.round((event.probabilityApplied || 0) * 1000) / 10}%`;
-
-  if (isSensitiveCategory(event.category)) {
-    row.classList.add("sensitive");
-  }
-
-  row.innerHTML = `
-    <div>${event.label}</div>
-    <div class="meta">Categorie: ${event.category} | Probabilite appliquee: ${probabilityPct}</div>
-    <div class="meta">${sourceMeta(event.sourceId)} ${sourceLink(event.sourceId)}</div>
-  `;
-
-  if (event.note) {
-    const note = document.createElement("div");
-    note.className = "meta";
-    note.textContent = `Contexte: ${event.note}`;
-    row.appendChild(note);
-  }
-
-  if (Array.isArray(event.effects) && event.effects.length > 0) {
-    const effects = document.createElement("div");
-    effects.className = "meta";
-    effects.textContent = `Effets possibles: ${event.effects.join("; ")}`;
-    row.appendChild(effects);
-  }
-
-  return row;
-}
-
-function createEventJournalItem(entry, yearTitle, events) {
-  const li = document.createElement("li");
-  li.innerHTML = `
-    <strong>${yearTitle}</strong>: ${events.length} evenement(s) cette annee.
-    <div class="meta">Etape: ${entry.lifeStage || "N/A"} | Identite: ${entry.identity}</div>
-  `;
-
-  for (const event of events) {
-    li.appendChild(createEventRow(event));
-  }
-
-  return li;
-}
-
-function renderLifeJournal() {
-  if (!dom.lifeJournal) return;
-  if (!state.simulationState) {
-    dom.lifeJournal.innerHTML = "";
-    const li = document.createElement("li");
-    li.className = "journal-placeholder";
-    li.textContent = "Le journal de vie apparaitra ici apres le debut de la simulation.";
-    dom.lifeJournal.appendChild(li);
-    return;
-  }
-
-  const timelineEntries = state.simulationState.timeline.slice().reverse();
-  dom.lifeJournal.innerHTML = "";
-
-  for (const entry of timelineEntries) {
-    const events = state.showSensitive
-      ? entry.events
-      : entry.events.filter((event) => !isSensitiveCategory(event.category));
-
-    const yearTitle = `Annee ${entry.year} - age ${entry.age}`;
-    if (entry.year === 0) {
-      dom.lifeJournal.appendChild(createBirthJournalItem(entry, yearTitle));
-      continue;
-    }
-
-    if (events.length === 0) {
-      dom.lifeJournal.appendChild(createNoEventJournalItem(entry, yearTitle));
-      continue;
-    }
-
-    dom.lifeJournal.appendChild(createEventJournalItem(entry, yearTitle, events));
-  }
-}
-
-async function api(path, payload) {
-  const response = await fetch(path, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload || {}),
-  });
-
-  if (!response.ok) {
-    const details = await response.text();
-    throw new Error(`Erreur API (${response.status}): ${details}`);
-  }
-
-  return response.json();
+  setStatus(dom, "Lecture automatique active: +1 an toutes les 5 secondes.");
+  appendLog(dom, "info", "Lecture automatique demarree.");
+  refreshControls(dom, state);
 }
 
 async function bootstrap() {
-  const response = await fetch("/api/bootstrap");
-  if (!response.ok) {
-    throw new Error("Impossible de charger la configuration initiale.");
-  }
-
-  const data = await response.json();
+  const data = await fetchBootstrap();
   state.yearDurationMs = data.app.yearDurationMs;
+  state.flags = data.flags || state.flags;
+  applyUiFlags(dom, state);
 
   for (const source of data.sources) {
     state.sourceById.set(source.id, source);
@@ -266,107 +186,71 @@ async function bootstrap() {
 async function startSimulation() {
   stopAutoPlay();
 
-  const { state: created } = await api("/api/state/create", {});
-
+  const { state: created } = await createSimulationState();
   state.simulationState = created;
-  renderTimeline();
-  renderYearEvents([]);
-  renderLifeJournal();
+  ensureIndicators(state.simulationState);
+
+  renderTimeline(dom, state);
+  renderYearEvents(dom, state, []);
+  renderLifeJournal(dom, state);
+  renderIdentity(dom, state);
+  renderIndicators(dom, state);
+  showBirthModal(dom, state, created);
 
   setStatus(
+    dom,
     `Simulation active: age ${created.age}, etape ${created.lifeStage}, identite ${created.identity}, profil ${socioLabel(created.socioEconomic)}.`
   );
   appendLog(
+    dom,
     "info",
     `Nouvelle simulation: naissance aleatoire (${created.assignedSexAtBirth}), profil ${socioLabel(created.socioEconomic)}.`
   );
-  startAutoPlay();
-  refreshControls();
-}
 
-async function advanceYear() {
-  if (!state.simulationState?.alive) return;
-
-  const response = await api("/api/state/advance", {
-    state: state.simulationState,
-  });
-
-  state.simulationState = response.state;
-  renderTimeline();
-  renderYearEvents(response.yearEvents || []);
-  renderLifeJournal();
-
-  if (!state.simulationState.alive) {
-    setStatus(
-      `Fin de vie atteinte a ${state.simulationState.age} ans. La simulation s'arrete automatiquement.`
-    );
-    appendLog("warn", `Fin de vie a ${state.simulationState.age} ans.`);
-    stopAutoPlay();
-  } else {
-    setStatus(
-      `Annee ${state.simulationState.year}: age ${state.simulationState.age}, etape ${state.simulationState.lifeStage}, identite ${state.simulationState.identity}.`
-    );
-    appendLog(
-      "info",
-      `Annee ${state.simulationState.year}, age ${state.simulationState.age}, etape ${state.simulationState.lifeStage}, identite ${state.simulationState.identity}, ${response.yearEvents.length} evenement(s).`
-    );
-
-    for (const event of response.yearEvents) {
-      appendLog("info", `Evenement: ${event.label} [${event.category}]`);
-    }
+  if (featureEnabled(state.flags?.ui?.autoStartAfterBirth)) {
+    startAutoPlay();
   }
 
-  refreshControls();
-}
-
-function startAutoPlay() {
-  if (state.timerId || !state.simulationState?.alive) return;
-
-  state.timerId = setInterval(() => {
-    advanceYear().catch((error) => {
-      setStatus(error.message);
-      stopAutoPlay();
-    });
-  }, state.yearDurationMs);
-
-  setStatus("Lecture automatique active: +1 an toutes les 5 secondes.");
-  appendLog("info", "Lecture automatique demarree.");
-  refreshControls();
-}
-
-function stopAutoPlay() {
-  if (!state.timerId) return;
-  clearInterval(state.timerId);
-  state.timerId = null;
-  refreshControls();
+  refreshControls(dom, state);
 }
 
 dom.form.addEventListener("submit", (event) => {
   event.preventDefault();
   startSimulation().catch((error) => {
-    setStatus(error.message);
-    appendLog("error", error.message);
+    setStatus(dom, error.message);
+    appendLog(dom, "error", error.message);
   });
 });
 
 dom.pause.addEventListener("click", () => {
   stopAutoPlay();
-  setStatus("Lecture automatique en pause.");
-  appendLog("info", "Lecture automatique en pause.");
+  setStatus(dom, "Lecture automatique en pause.");
+  appendLog(dom, "info", "Lecture automatique en pause.");
 });
 
-dom.sensitiveFilter.addEventListener("change", () => {
-  state.showSensitive = dom.sensitiveFilter.checked;
-  const last = state.simulationState?.timeline?.[state.simulationState.timeline.length - 1];
-  renderYearEvents(last?.events || []);
-  renderLifeJournal();
-  appendLog(
-    "info",
-    state.showSensitive
-      ? "Filtre sensible: affichage active."
-      : "Filtre sensible: affichage masque."
-  );
-});
+if (dom.birthModalClose) {
+  dom.birthModalClose.addEventListener("click", () => {
+    if (dom.birthModal?.open) {
+      dom.birthModal.close();
+    }
+  });
+}
+
+if (dom.sensitiveFilter) {
+  dom.sensitiveFilter.addEventListener("change", () => {
+    state.showSensitive = dom.sensitiveFilter.checked;
+    const last = state.simulationState?.timeline?.[state.simulationState.timeline.length - 1];
+    renderYearEvents(dom, state, last?.events || []);
+    renderLifeJournal(dom, state);
+    appendLog(
+      dom,
+      "info",
+      state.showSensitive
+        ? "Filtre sensible: affichage active."
+        : "Filtre sensible: affichage masque."
+    );
+  });
+}
 
 try {
   if (dom.activityLog) {
@@ -375,12 +259,13 @@ try {
     li.textContent = "Le journal technique se remplira automatiquement pendant la simulation.";
     dom.activityLog.appendChild(li);
   }
-  renderLifeJournal();
+
+  renderLifeJournal(dom, state);
   await bootstrap();
-  setStatus("Configuration chargee. Clique sur Naitre pour commencer.");
-  appendLog("info", "Configuration chargee. Simulation prete.");
-  refreshControls();
+  setStatus(dom, "Configuration chargee. Clique sur Naitre pour commencer.");
+  appendLog(dom, "info", "Configuration chargee. Simulation prete.");
+  refreshControls(dom, state);
 } catch (error) {
-  setStatus(`Echec au chargement initial: ${error.message}`);
-  appendLog("error", `Echec initial: ${error.message}`);
+  setStatus(dom, `Echec au chargement initial: ${error.message}`);
+  appendLog(dom, "error", `Echec initial: ${error.message}`);
 }

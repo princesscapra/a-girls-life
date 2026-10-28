@@ -5,6 +5,10 @@ function clampProbability(value) {
   return value;
 }
 
+function enabled(flagValue) {
+  return flagValue !== false;
+}
+
 function mortalityProbabilityByAge(age) {
   if (age <= 1) return 0.003;
   if (age <= 14) return 0.0001;
@@ -108,7 +112,58 @@ function maybeTransitionIdentity(state, rng) {
   return events;
 }
 
-export function createInitialState(input = {}) {
+function giveAName(assignedSexAtBirth) {
+  const names = {
+    AFAB: ["Alice", "Emma", "Léa", "Chloé", "Manon"],
+    AMAB: ["Lucas", "Hugo", "Arthur", "Louis", "Gabriel"],
+  };
+
+  const nameList = names[assignedSexAtBirth] || [];
+  if (nameList.length === 0) return "Inconnu-e";
+
+  const index = Math.floor(Math.random() * nameList.length);
+  return nameList[index];
+}
+
+function assignWeight() {
+  return Math.random() * 2 + 3; // Poids entre 3 et 5 kg
+}
+
+function assignHeight() {
+  return Math.random() * 20 + 50; // Taille entre 50 et 70 cm
+}
+
+function giveMotherName() {
+  const motherNames = ["Marie", "Sophie", "Isabelle", "Catherine", "Julie"];
+  const index = Math.floor(Math.random() * motherNames.length);
+  return motherNames[index];
+}
+
+function giveFatherName() {
+  const fatherNames = ["Jean", "Pierre", "Michel", "Jacques", "Louis"];
+  const index = Math.floor(Math.random() * fatherNames.length);
+  return fatherNames[index];
+}
+
+function getAppearance() {
+  const randomValue = Math.random();
+  if (randomValue < 0.5) return "/images/char-1.jpg";
+  if (randomValue < 0.75) return "/images/char-2.jpg";
+  return "/images/char-3.jpg";
+}
+
+function createDefaultIndicators() {
+  return {
+    bonheur: 50,
+    sante: 55,
+    santeMentale: 50,
+    estimeDeSoi: 50,
+    affirmationDeSoi: 45,
+    conditionDeVie: 50,
+  };
+}
+
+export function createInitialState(input = {}, simulationFlags = {}) {
   const rng = typeof input.rng === "function" ? input.rng : Math.random;
   const assignedSexAtBirth = rng() < 0.5 ? "AFAB" : "AMAB";
 
@@ -119,32 +174,71 @@ export function createInitialState(input = {}) {
 
   const initialIdentity = assignedSexAtBirth === "AFAB" ? "fille cis" : "identite en exploration";
   const lifeStage = lifeStageByAge(0);
+  const birthDate = input.birthDate || new Date().toISOString();
+
+  const name = input.name || giveAName(assignedSexAtBirth);
+  const appearance = input.appearance || getAppearance();
+  const weight = input.weight || assignWeight();
+  const height = input.height || assignHeight();
+  const mothername = input.mothername || giveMotherName();
+  const fathername = input.fathername || giveFatherName();
+  const indicators = input.indicators || createDefaultIndicators();
 
   return {
     age: 0,
     year: 0,
+    appearance,
+    name,
+    weight,
+    height,
+    mothername,
+    fathername,
+    birthDate,
     alive: true,
     assignedSexAtBirth,
     socioEconomic,
     isTransWoman: false,
     identity: initialIdentity,
     lifeStage,
+    indicators,
     triggeredEventIds: [],
     timeline: [
       {
         year: 0,
         age: 0,
+        name,
+        weight,
+        height,
+        mothername,
+        fathername,
+        birthDate,
         identity: initialIdentity,
         lifeStage,
+        indicators: structuredClone(indicators),
         events: [],
       },
     ],
+    simulationFlags: {
+      enableIdentityTransition: enabled(simulationFlags.enableIdentityTransition),
+      enableMortality: enabled(simulationFlags.enableMortality),
+    },
   };
 }
 
-export function advanceOneYear(currentState, eventCatalog, sourceMap, rng = Math.random) {
+export function advanceOneYear(
+  currentState,
+  eventCatalog,
+  sourceMap,
+  rng = Math.random,
+  simulationFlags = {}
+) {
   const state = structuredClone(currentState);
   const yearEvents = [];
+  const features = {
+    enableIdentityTransition:
+      enabled(simulationFlags.enableIdentityTransition) && enabled(state.simulationFlags?.enableIdentityTransition),
+    enableMortality: enabled(simulationFlags.enableMortality) && enabled(state.simulationFlags?.enableMortality),
+  };
 
   if (!state.alive) {
     return {
@@ -157,7 +251,9 @@ export function advanceOneYear(currentState, eventCatalog, sourceMap, rng = Math
   state.age += 1;
   state.lifeStage = lifeStageByAge(state.age);
 
-  yearEvents.push(...maybeTransitionIdentity(state, rng));
+  if (features.enableIdentityTransition) {
+    yearEvents.push(...maybeTransitionIdentity(state, rng));
+  }
 
   for (const event of eventCatalog) {
     if (!canTrigger(event, state)) continue;
@@ -178,17 +274,19 @@ export function advanceOneYear(currentState, eventCatalog, sourceMap, rng = Math
     });
   }
 
-  const deathProbability = clampProbability(mortalityProbabilityByAge(state.age));
-  if (state.age >= 110 || rng() < deathProbability) {
-    state.alive = false;
-    yearEvents.push({
-      id: "mortality",
-      category: "mortalite",
-      label: "Fin de vie du personnage.",
-      probabilityApplied: deathProbability,
-      sourceId: "insee_mortality",
-      sourceCollectedAt: sourceMap.insee_mortality?.collectedAt || null,
-    });
+  if (features.enableMortality) {
+    const deathProbability = clampProbability(mortalityProbabilityByAge(state.age));
+    if (state.age >= 110 || rng() < deathProbability) {
+      state.alive = false;
+      yearEvents.push({
+        id: "mortality",
+        category: "mortalite",
+        label: "Fin de vie du personnage.",
+        probabilityApplied: deathProbability,
+        sourceId: "insee_mortality",
+        sourceCollectedAt: sourceMap.insee_mortality?.collectedAt || null,
+      });
+    }
   }
 
   state.timeline.push({
@@ -196,6 +294,7 @@ export function advanceOneYear(currentState, eventCatalog, sourceMap, rng = Math
     age: state.age,
     identity: state.identity,
     lifeStage: state.lifeStage,
+    indicators: structuredClone(state.indicators),
     events: yearEvents,
   });
 

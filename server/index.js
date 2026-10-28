@@ -104,6 +104,7 @@ function handleBootstrap(res) {
       dataLoadedAt: gameData.loadedAt,
       locale: "fr-FR",
     },
+    flags: gameData.flags,
     events: exposedEvents,
     sources: gameData.sources,
   });
@@ -112,7 +113,7 @@ function handleBootstrap(res) {
 async function handleStateCreate(req, res) {
   const raw = await readBody(req);
   const input = raw ? JSON.parse(raw) : {};
-  const state = createInitialState(input);
+  const state = createInitialState(input, gameData.flags?.simulation);
   sendJson(res, 200, { state });
 }
 
@@ -124,7 +125,13 @@ async function handleStateAdvance(req, res) {
     return;
   }
 
-  const { state, yearEvents } = advanceOneYear(input.state, gameData.events, sourceMapById(gameData.sources));
+  const { state, yearEvents } = advanceOneYear(
+    input.state,
+    gameData.events,
+    sourceMapById(gameData.sources),
+    Math.random,
+    gameData.flags?.simulation
+  );
   sendJson(res, 200, { state, yearEvents });
 }
 
@@ -135,6 +142,11 @@ async function handleApi(method, pathname, req, res) {
   }
 
   if (method === "POST" && pathname === "/api/reload-data") {
+    if (gameData.flags?.api?.allowDataReload === false) {
+      sendJson(res, 403, { error: "Data reload is disabled by configuration" });
+      return true;
+    }
+
     gameData = loadGameData();
     sendJson(res, 200, { ok: true, loadedAt: gameData.loadedAt });
     return true;

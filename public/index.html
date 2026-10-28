@@ -9,7 +9,7 @@
   <body>
     <header class="hero">
       <h1>A Girl's Life</h1>
-      <p>Simulateur de vie factuel: 5 secondes reelles = 1 an de vie.</p>
+      <p>Simulation narrative minimaliste.</p>
     </header>
 
     <main>
@@ -21,7 +21,7 @@
             puis evolution de l'identite selon les probabilites du moteur.
           </p>
 
-          <button type="submit">Naitre</button>
+          <button type="submit">Prendre son premier souffle</button>
         </form>
       </section>
 
@@ -33,7 +33,54 @@
         </div>
       </section>
 
-      <section class="card">
+      <section id="indicators-card" class="card">
+        <h2>Indicateurs de vie</h2>
+        <div class="indicators">
+          <div class="indicator-row">
+            <div class="indicator-head"><span>Bonheur</span><span id="value-bonheur">0/100</span></div>
+            <div class="indicator-track"><div id="fill-bonheur" class="indicator-fill"></div></div>
+          </div>
+          <div class="indicator-row">
+            <div class="indicator-head"><span>Sante</span><span id="value-sante">0/100</span></div>
+            <div class="indicator-track"><div id="fill-sante" class="indicator-fill"></div></div>
+          </div>
+          <div class="indicator-row">
+            <div class="indicator-head"><span>Sante mentale</span><span id="value-sante-mentale">0/100</span></div>
+            <div class="indicator-track"><div id="fill-sante-mentale" class="indicator-fill"></div></div>
+          </div>
+          <div class="indicator-row">
+            <div class="indicator-head"><span>Estime de soi</span><span id="value-estime-de-soi">0/100</span></div>
+            <div class="indicator-track"><div id="fill-estime-de-soi" class="indicator-fill"></div></div>
+          </div>
+          <div class="indicator-row">
+            <div class="indicator-head"><span>Affirmation de soi</span><span id="value-affirmation-de-soi">0/100</span></div>
+            <div class="indicator-track"><div id="fill-affirmation-de-soi" class="indicator-fill"></div></div>
+          </div>
+          <div class="indicator-row">
+            <div class="indicator-head"><span>Condition de vie</span><span id="value-condition-de-vie">0/100</span></div>
+            <div class="indicator-track"><div id="fill-condition-de-vie" class="indicator-fill"></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="identity-card" class="card">
+        <h2>Identité</h2>
+        <img id="avatar" class="avatar" src="" alt="Portrait du personnage">
+        <ul id="identity" class="identity">
+          <li>Nom & Prénom: <span id="name"></span></li>
+          <li>Date de naissance: <span id="birth-date"></span></li>
+          <li>Sexe assigné à la naissance: <span id="birth-sex"></span></li>
+          <li>Identité de genre: <span id="gender-identity"></span></li>
+          <li>Orientation sexuelle: <span id="sexual-orientation"></span></li>
+          <li>Contexte social: <span id="social-context"></span></li>
+          <li>Religion: <span id="religion"></span></li>
+          <li>Education: <span id="education"></span></li>
+          <li>Profession: <span id="profession"></span></li>
+          <li>Passion: <span id="passion"></span></li>
+        </ul>
+      </section>
+
+      <section id="sensitive-filter-card" class="card">
         <h2>Filtres</h2>
         <label class="toggle">
           <input id="sensitive-filter" type="checkbox" checked>
@@ -56,7 +103,7 @@
         <ol id="timeline" class="timeline"></ol>
       </section>
 
-      <section class="card">
+      <section id="activity-log-card" class="card">
         <h2>Journal technique</h2>
         <ul id="activity-log" class="activity-log"></ul>
       </section>
@@ -69,6 +116,23 @@
         </p>
       </section>
     </main>
+
+    <dialog id="birth-modal" class="birth-modal" aria-labelledby="birth-modal-title">
+      <article class="birth-modal__content">
+        <h3 id="birth-modal-title">Bordereau de naissance</h3>
+        <p id="birth-modal-text"></p>
+        <button id="birth-modal-close" type="button">Fermer</button>
+      </article>
+    </dialog>
+
+    <dialog id="scenario-modal" class="scenario-modal" aria-labelledby="scenario-title">
+      <article class="scenario-modal__content">
+        <h3 id="scenario-title">Placeholder scenario</h3>
+        <p id="scenario-description"></p>
+        <p id="scenario-event-label" class="meta"></p>
+        <div id="scenario-choices" class="scenario-choices"></div>
+      </article>
+    </dialog>
 
     <footer>
       <small>Sources et probabilites en cours de calibration France.</small>

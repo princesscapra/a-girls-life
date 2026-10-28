@@ -1,0 +1,69 @@
+[
+  {
+    "id": "charge_mentale_parentalite",
+    "category": "parentalite",
+    "label": "Hausse de la charge mentale liee a la parentalite.",
+    "target": "all_women",
+    "probabilityAnnual": 0.04,
+    "minAge": 25,
+    "maxAge": 50,
+    "sourceId": "onufemmes_violence",
+    "note": "Evenement non violent utilise pour equilibrer la simulation du parcours de vie."
+  },
+  {
+    "id": "violence_enfance_cadre_familial",
+    "category": "violences",
+    "label": "Exposition a des violences intrafamiliales pendant l'enfance.",
+    "target": "all_women",
+    "probabilityAnnual": 0.03,
+    "minAge": 0,
+    "maxAge": 17,
+    "sourceId": "unicef_violence_enfants",
+    "note": "Parametre initial de sensibilisation sur les violences envers les enfants; calibration France a poursuivre.",
+    "modifiers": [
+      {
+        "socioEconomic": ["low"],
+        "multiplier": 1.4
+      }
+    ]
+  },
+  {
+    "id": "cadre_parental_instable",
+    "category": "cadre_parental",
+    "label": "Cadre parental instable impactant le bien-etre et la securite de l'enfant.",
+    "target": "all_women",
+    "probabilityAnnual": 0.04,
+    "minAge": 0,
+    "maxAge": 17,
+    "sourceId": "onpe_protection_enfance",
+    "note": "Evenement de contexte familial pour mieux refleter la diversite des parcours d'enfance.",
+    "modifiers": [
+      {
+        "socioEconomic": ["low"],
+        "multiplier": 1.5
+      }
+    ]
+  },
+  {
+    "id": "maltraitance_psychologique_domicile",
+    "category": "violences",
+    "label": "Maltraitance psychologique au domicile pendant l'enfance.",
+    "target": "all_women",
+    "probabilityAnnual": 0.025,
+    "minAge": 0,
+    "maxAge": 17,
+    "sourceId": "oms_violence_enfants",
+    "note": "Proxy annuel initial base sur la litterature internationale ACE/violence infantile; calibration nationale en attente.",
+    "effects": [
+      "Dysregulation emotionnelle",
+      "Hypervigilance",
+      "Risque accru de TSPT"
+    ],
+    "modifiers": [
+      {
+        "socioEconomic": ["low"],
+        "multiplier": 1.35
+      }
+    ]
+  }
+]

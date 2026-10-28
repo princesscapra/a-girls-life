@@ -30,6 +30,48 @@ Puis ouvrir http://localhost:8080
 - `data/` evenements et sources
 - `docs/` methode et hypotheses
 
+## Feature flags (booleens)
+
+Le projet est parametre via `data/feature-flags.json`.
+
+Principes:
+
+- Tous les flags sont des booleens (`true`/`false`).
+- Si un flag est absent, la valeur par defaut est `true`.
+- Les flags sont charges au demarrage et exposes au frontend via `/api/bootstrap`.
+
+Zones disponibles:
+
+- `data`: activer/desactiver le chargement des events racine et categories.
+- `api`: autoriser/interdire `POST /api/reload-data`.
+- `simulation`: activer/desactiver la transition d'identite et la mortalite.
+- `ui`: afficher/masquer certaines sections et comportements UI.
+- `eventCategories`: activer/desactiver des categories completes d'evenements.
+
+Exemple rapide:
+
+```json
+{
+	"simulation": {
+		"enableMortality": false
+	},
+	"ui": {
+		"showBirthModal": false
+	},
+	"eventCategories": {
+		"discrimination": false
+	}
+}
+```
+
+## Reprendre le code rapidement
+
+Voir:
+
+- `docs/architecture.md`
+- `docs/reprise-code.md`
+- `docs/refactorisation-plan.md`
+
 ## Etat de maturite
 
 MVP technique en construction. Les probabilites doivent encore etre calibrees sur jeux de donnees harmonises France.

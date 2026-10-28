@@ -1,0 +1,31 @@
+{
+  "data": {
+    "loadCategoryEvents": true,
+    "loadRootEvents": true
+  },
+  "api": {
+    "allowDataReload": true
+  },
+  "simulation": {
+    "enableIdentityTransition": true,
+    "enableMortality": true
+  },
+  "ui": {
+    "showBirthModal": true,
+    "showSensitiveFilter": true,
+    "showIdentityCard": true,
+    "showActivityLog": true,
+    "showScenarioPopup": true,
+    "showIndicators": true,
+    "autoStartAfterBirth": true
+  },
+  "eventCategories": {
+    "precarite": true,
+    "sante_reproductive": true,
+    "education_emploi": true,
+    "positif": true,
+    "family": true,
+    "childhood": true,
+    "discrimination": true
+  }
+}

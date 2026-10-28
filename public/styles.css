@@ -1,12 +1,11 @@
 :root {
-  --bg: #f3efe6;
-  --bg-alt: #e8ddc9;
-  --surface: #fff9ef;
-  --text: #231f1a;
-  --accent: #12664f;
-  --accent-strong: #0a4637;
+  --bg: #f6f3ed;
+  --surface: #ffffff;
+  --text: #1f1f1f;
+  --accent: #1e6f57;
+  --accent-strong: #155542;
   --danger: #8c1c13;
-  --border: #ccbfa6;
+  --border: #ddd3c3;
 }
 
 * {
@@ -17,41 +16,38 @@ body {
   margin: 0;
   font-family: "Source Serif 4", Georgia, serif;
   color: var(--text);
-  background:
-    radial-gradient(circle at 10% 0%, rgba(18, 102, 79, 0.12), transparent 38%),
-    radial-gradient(circle at 100% 80%, rgba(140, 28, 19, 0.08), transparent 40%),
-    linear-gradient(180deg, var(--bg), var(--bg-alt));
+  background: var(--bg);
   min-height: 100vh;
 }
 
 .hero {
-  padding: 2rem 1rem 1.5rem;
+  padding: 1.4rem 1rem 1rem;
   text-align: center;
 }
 
 .hero h1 {
-  margin: 0 0 0.5rem;
-  font-size: clamp(2rem, 4vw, 3rem);
-  letter-spacing: 0.02em;
+  margin: 0;
+  font-size: clamp(1.7rem, 4vw, 2.4rem);
 }
 
 main {
-  width: min(980px, 92vw);
+  width: min(920px, 92vw);
   margin: 0 auto 2rem;
   display: grid;
-  gap: 1rem;
+  gap: 0.8rem;
 }
 
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 1rem;
-  box-shadow: 0 2px 0 rgba(35, 31, 26, 0.08);
+  box-shadow: 0 1px 0 rgba(20, 20, 20, 0.06);
 }
 
 .card h2 {
   margin-top: 0;
+  margin-bottom: 0.7rem;
 }
 
 form,
@@ -62,21 +58,11 @@ form,
   align-items: center;
 }
 
-label {
-  font-weight: 600;
-  display: block;
-  width: 100%;
-}
-
-select,
 button {
   font: inherit;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 1px solid var(--border);
   padding: 0.45rem 0.7rem;
-}
-
-button {
   background: var(--accent);
   color: #fff;
   border-color: var(--accent-strong);
@@ -94,49 +80,100 @@ button:focus-visible:enabled {
 }
 
 .toggle {
-  font-weight: 400;
   display: flex;
-  gap: 0.6rem;
   align-items: center;
+  gap: 0.55rem;
+  font-weight: 400;
 }
 
-.events,
-.timeline {
+.indicators {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.indicator-row {
+  display: grid;
+  gap: 0.28rem;
+}
+
+.indicator-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.94rem;
+}
+
+.indicator-track {
+  width: 100%;
+  height: 0.64rem;
+  background: #e1d6c2;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.indicator-fill {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, #b24c2a, #cc9a45 45%, #2f7f5d);
+  transition: width 0.25s ease;
+}
+
+.events {
   margin: 0;
   padding-left: 1.2rem;
 }
 
-.timeline {
-  max-height: 18rem;
-  overflow: auto;
-}
-
-.life-journal {
-  margin: 0;
-  padding-left: 1.2rem;
-  max-height: 18rem;
-  overflow: auto;
-  min-height: 3.2rem;
-}
-
+.timeline,
+.life-journal,
 .activity-log {
   margin: 0;
   padding-left: 1.2rem;
-  max-height: 15rem;
-  overflow: auto;
-  min-height: 3.2rem;
-  font-family: "IBM Plex Mono", "Courier New", monospace;
-  font-size: 0.9rem;
 }
 
-.events li,
-.timeline li {
+.timeline,
+.life-journal {
+  max-height: 16rem;
+  overflow: auto;
+}
+
+.activity-log {
+  max-height: 14rem;
+  overflow: auto;
+  font-family: "IBM Plex Mono", "Courier New", monospace;
+  font-size: 0.88rem;
+}
+
+.avatar {
+  display: block;
+  width: min(280px, 100%);
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 0.9rem;
+  background: #eadfcf;
+}
+
+.avatar[src=""] {
+  display: none;
+}
+
+.identity {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.identity li {
+  margin-bottom: 0.35rem;
+}
+
+.events li {
   margin-bottom: 0.6rem;
   line-height: 1.4;
 }
 
+.timeline li,
 .life-journal li {
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.55rem;
   line-height: 1.35;
 }
 
@@ -178,6 +215,73 @@ button:focus-visible:enabled {
 footer {
   text-align: center;
   padding: 1.2rem 1rem 2rem;
+}
+
+.birth-modal {
+  border: none;
+  border-radius: 12px;
+  padding: 0;
+  width: min(560px, 92vw);
+  box-shadow: 0 12px 36px rgba(35, 31, 26, 0.28);
+}
+
+.birth-modal::backdrop {
+  background: rgba(30, 25, 18, 0.48);
+}
+
+.birth-modal__content {
+  padding: 1rem;
+}
+
+.birth-modal h3 {
+  margin: 0 0 0.6rem;
+}
+
+.birth-modal p {
+  margin: 0 0 0.9rem;
+  line-height: 1.5;
+  white-space: pre-line;
+}
+
+.scenario-modal {
+  border: none;
+  border-radius: 12px;
+  padding: 0;
+  width: min(720px, 94vw);
+  box-shadow: 0 12px 36px rgba(35, 31, 26, 0.28);
+}
+
+.scenario-modal::backdrop {
+  background: rgba(30, 25, 18, 0.48);
+}
+
+.scenario-modal__content {
+  padding: 1rem;
+}
+
+.scenario-modal h3 {
+  margin: 0 0 0.6rem;
+}
+
+.scenario-modal p {
+  margin: 0 0 0.7rem;
+}
+
+.scenario-choices {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.scenario-choice {
+  text-align: left;
+  width: 100%;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.scenario-choice span {
+  font-size: 0.88rem;
+  opacity: 0.92;
 }
 
 @media (max-width: 700px) {

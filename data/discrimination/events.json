@@ -1,0 +1,91 @@
+[
+	{
+		"id": "harcelement_espace_public",
+		"category": "violences",
+		"label": "Experience de harcelement sexiste dans l'espace public.",
+		"target": "all_women",
+		"probabilityAnnual": 0.08,
+		"minAge": 12,
+		"maxAge": 75,
+		"sourceId": "hautconseil_egalite",
+		"note": "Valeur de depart MVP a recalibrer sur donnees annuelles harmonisees France.",
+		"modifiers": [
+			{
+				"minAge": 12,
+				"maxAge": 24,
+				"multiplier": 1.4
+			},
+			{
+				"socioEconomic": ["low"],
+				"multiplier": 1.2
+			}
+		]
+	},
+	{
+		"id": "discrimination_emploi",
+		"category": "emploi",
+		"label": "Discrimination de genre au travail ou a l'embauche.",
+		"target": "all_women",
+		"probabilityAnnual": 0.05,
+		"minAge": 18,
+		"maxAge": 64,
+		"sourceId": "hautconseil_egalite",
+		"note": "Proxy annuel initial; calibration detaillee prevue dans le prochain lot de donnees.",
+		"modifiers": [
+			{
+				"socioEconomic": ["low"],
+				"multiplier": 1.3
+			}
+		]
+	},
+	{
+		"id": "ecart_remuneration",
+		"category": "revenus",
+		"label": "Impact de l'ecart de remuneration selon le genre.",
+		"target": "all_women",
+		"probabilityAnnual": 0.09,
+		"minAge": 22,
+		"maxAge": 64,
+		"sourceId": "hautconseil_egalite",
+		"note": "Traduit un risque structurel en evenement annuel simplifie pour le MVP."
+	},
+	{
+		"id": "discrimination_trans_services",
+		"category": "discriminations",
+		"label": "Discrimination specifique vecue en tant que femme trans.",
+		"target": "trans_women",
+		"probabilityAnnual": 0.12,
+		"minAge": 14,
+		"maxAge": 80,
+		"sourceId": "amnesty_trans_discrimination",
+		"note": "Parametre initial de sensibilisation; ajustement quantitatif France requis.",
+		"modifiers": [
+			{
+				"socioEconomic": ["low"],
+				"multiplier": 1.2
+			}
+		]
+	},
+	{
+		"id": "sexisme_petite_fille_scolaire",
+		"category": "discriminations",
+		"label": "Sexisme et stereotyping de genre vecus a l'ecole pendant l'enfance.",
+		"target": "all_women",
+		"probabilityAnnual": 0.06,
+		"minAge": 6,
+		"maxAge": 14,
+		"sourceId": "unicef_egalite_filles",
+		"note": "Traduit les normes de genre discriminantes en experience annuelle dans le parcours des petites filles."
+	},
+	{
+		"id": "discrimination_activites_petite_fille",
+		"category": "discriminations",
+		"label": "Restriction d'acces ou orientation stereotypee dans les activites de petite fille.",
+		"target": "all_women",
+		"probabilityAnnual": 0.05,
+		"minAge": 5,
+		"maxAge": 12,
+		"sourceId": "hautconseil_egalite",
+		"note": "Permet de representer des discriminations precoces et du sexisme ordinaire durant l'enfance."
+	}
+]
